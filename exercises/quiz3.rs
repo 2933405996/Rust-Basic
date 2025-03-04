@@ -22,12 +22,34 @@ pub struct ReportCard {
     pub grade: f32,
     pub student_name: String,
     pub student_age: u8,
+    pub grade_type: String,
 }
 
 impl ReportCard {
     pub fn print(&self) -> String {
-        format!("{} ({}) - achieved a grade of {}",
-            &self.student_name, &self.student_age, &self.grade)
+        if self.grade_type == "numeric" {
+            format!(
+                "{} ({}) - achieved a grade of {}",
+                &self.student_name, &self.student_age, &self.grade
+            )
+        } else {
+            let grade = match self.grade {
+                x if (x - 5.0).abs() < f32::EPSILON => "A+",
+                x if x > 4.5 => "A",
+                x if x > 4.0 => "B",
+                x if x > 3.5 => "B-",
+                x if x > 3.0 => "C",
+                x if x > 2.5 => "C-",
+                x if x > 2.0 => "D",
+                x if x > 1.5 => "D-",
+                x if x > 1.0 => "F",
+                _ => "Invalid grade",
+            };
+            format!(
+                "{} ({}) - achieved a grade of {}",
+                &self.student_name, &self.student_age, grade
+            )
+        }
     }
 }
 
@@ -41,6 +63,7 @@ mod tests {
             grade: 2.1,
             student_name: "Tom Wriggle".to_string(),
             student_age: 12,
+            grade_type: "numeric".to_string(),
         };
         assert_eq!(
             report_card.print(),
@@ -52,9 +75,10 @@ mod tests {
     fn generate_alphabetic_report_card() {
         // TODO: Make sure to change the grade here after you finish the exercise.
         let report_card = ReportCard {
-            grade: 2.1,
+            grade: 5.0,
             student_name: "Gary Plotter".to_string(),
             student_age: 11,
+            grade_type: "alphabetic".to_string(),
         };
         assert_eq!(
             report_card.print(),
